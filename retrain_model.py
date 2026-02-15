@@ -5,6 +5,7 @@ This will retrain the model using your current scikit-learn version
 
 import pandas as pd
 import numpy as np
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
@@ -25,7 +26,17 @@ print(f"\nYour scikit-learn version: {sklearn.__version__}")
 # Load processed data
 print("\n[1] Loading processed data...")
 try:
-    df = pd.read_csv('processed_data.csv')
+    # Try multiple paths for data
+    data_paths = ['processed_data.csv', 'data/processed_data.csv', '../data/processed_data.csv']
+    df = None
+    for path in data_paths:
+        if os.path.exists(path):
+            print(f"Found data at: {path}")
+            df = pd.read_csv(path)
+            break
+    
+    if df is None:
+        raise FileNotFoundError("processed_data.csv not found in any expected location")
     print(f"✅ Data loaded: {df.shape}")
 except FileNotFoundError:
     print("❌ processed_data.csv not found!")
@@ -97,6 +108,7 @@ print(classification_report(y_test, y_pred))
 
 # Save models
 print("\n[7] Saving models...")
+os.makedirs('ml_models', exist_ok=True)
 joblib.dump(model, 'ml_models/sentiment_model.pkl')
 joblib.dump(vectorizer, 'ml_models/vectorizer.pkl')
 print("✅ Models saved to ml_models/")

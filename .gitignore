@@ -1,0 +1,11 @@
+.env
+db.sqlite3
+__pycache__/
+*.pyc
+staticfiles/
+ml_models/
+.vscode/
+.idea/
+venv/
+env/
+*.log
