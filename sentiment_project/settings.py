@@ -1,13 +1,17 @@
 import os
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,6 +25,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,11 +55,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'sentiment_project.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        # سيقوم Render بتوفير DATABASE_URL تلقائياً
+        default=os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
+
+# إعدادات إضافية للأمان عند استخدام PostgreSQL في الإنتاج
+if not DEBUG:
+    DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -70,6 +81,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
