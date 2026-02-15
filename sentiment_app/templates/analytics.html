@@ -1,0 +1,570 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics - Sentiment Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #0f0f1e;
+        color: white;
+        min-height: 100vh;
+    }
+
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(45deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+    }
+
+    .bg-animation::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 30% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 70% 70%, rgba(255, 107, 107, 0.2) 0%, transparent 50%);
+        animation: bgMove 20s ease-in-out infinite;
+    }
+
+    @keyframes bgMove {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(30px, 30px) rotate(5deg); }
+    }
+
+    .analytics-container {
+        padding: 60px 20px;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1.1rem;
+    }
+
+    .main-stat-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 50px;
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .main-stat-number {
+        font-size: 5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+
+    .main-stat-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .sentiment-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .sentiment-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 35px;
+        text-align: center;
+        transition: all 0.3s;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .sentiment-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .sentiment-card-icon {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+    }
+
+    .sentiment-card-icon.positive { 
+        color: #4ade80;
+        text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+    }
+
+    .sentiment-card-icon.negative { 
+        color: #f87171;
+        text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+    }
+
+    .sentiment-card-icon.neutral { 
+        color: #94a3b8;
+        text-shadow: 0 0 20px rgba(148, 163, 184, 0.5);
+    }
+
+    .sentiment-card-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .sentiment-card-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .chart-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 40px;
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .chart-title i {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .insights-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 40px;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .insights-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .insight-card {
+        background: rgba(255, 255, 255, 0.03);
+        border-left: 4px solid #667eea;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+
+    .insight-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateX(5px);
+    }
+
+    .insight-icon {
+        font-size: 1.5rem;
+        margin-right: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .insight-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .insight-text {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .empty-chart {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-chart-icon {
+        font-size: 5rem;
+        color: rgba(255, 255, 255, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .empty-chart-text {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-animation"></div>
+
+<div class="analytics-container">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-chart-bar me-3"></i>
+                Analytics Dashboard
+            </h1>
+            <p class="page-subtitle">Comprehensive insights and trends</p>
+        </div>
+
+        <!-- Main Stat -->
+        <div class="main-stat-card">
+            <div class="main-stat-number">{{ total_predictions }}</div>
+            <div class="main-stat-label">Total Predictions Analyzed</div>
+        </div>
+
+        <!-- Sentiment Cards -->
+        <div class="sentiment-cards-grid">
+            {% for item in sentiment_counts %}
+            <div class="sentiment-card">
+                <div class="sentiment-card-icon {{ item.sentiment }}">
+                    {% if item.sentiment == 'positive' %}
+                        <i class="fas fa-smile"></i>
+                    {% elif item.sentiment == 'negative' %}
+                        <i class="fas fa-frown"></i>
+                    {% else %}
+                        <i class="fas fa-meh"></i>
+                    {% endif %}
+                </div>
+                <div class="sentiment-card-number">{{ item.count }}</div>
+                <div class="sentiment-card-label">{{ item.sentiment }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row">
+            <!-- Pie Chart -->
+            <div class="col-lg-6 mb-4">
+                <div class="chart-container">
+                    <h4 class="chart-title">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Distribution
+                    </h4>
+                    {% if sentiment_counts %}
+                    <canvas id="sentimentPieChart" height="250"></canvas>
+                    {% else %}
+                    <div class="empty-chart">
+                        <div class="empty-chart-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <p class="empty-chart-text">No data available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Doughnut Chart -->
+            <div class="col-lg-6 mb-4">
+                <div class="chart-container">
+                    <h4 class="chart-title">
+                        <i class="fas fa-percentage me-2"></i>
+                        Percentages
+                    </h4>
+                    {% if sentiment_counts %}
+                    <canvas id="sentimentDoughnutChart" height="250"></canvas>
+                    {% else %}
+                    <div class="empty-chart">
+                        <div class="empty-chart-icon">
+                            <i class="fas fa-chart-donut"></i>
+                        </div>
+                        <p class="empty-chart-text">No data available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Trend Chart -->
+        <div class="chart-container">
+            <h4 class="chart-title">
+                <i class="fas fa-chart-line me-2"></i>
+                7-Day Trend Analysis
+            </h4>
+            {% if dates %}
+            <canvas id="trendChart" height="100"></canvas>
+            {% else %}
+            <div class="empty-chart">
+                <div class="empty-chart-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <p class="empty-chart-text">Start analyzing to see trends</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Insights -->
+        <div class="insights-container">
+            <h4 class="insights-title">
+                <i class="fas fa-lightbulb me-2"></i>
+                Key Insights
+            </h4>
+
+            <div class="insight-card">
+                <h6 class="insight-title">
+                    <i class="fas fa-trophy insight-icon"></i>
+                    Most Common Sentiment
+                </h6>
+                <p class="insight-text">
+                    {% if sentiment_counts %}
+                        {% with sentiment_counts|first as top %}
+                            <strong>{{ top.sentiment|title }}</strong> sentiment appears most frequently 
+                            with <strong>{{ top.count }}</strong> predictions.
+                        {% endwith %}
+                    {% else %}
+                        No data available yet.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="insight-card">
+                <h6 class="insight-title">
+                    <i class="fas fa-database insight-icon"></i>
+                    Total Analyzed
+                </h6>
+                <p class="insight-text">
+                    You have analyzed <strong>{{ total_predictions }}</strong> text samples. 
+                    Keep analyzing to unlock more insights!
+                </p>
+            </div>
+
+            <div class="insight-card">
+                <h6 class="insight-title">
+                    <i class="fas fa-chart-bar insight-icon"></i>
+                    Accuracy Rate
+                </h6>
+                <p class="insight-text">
+                    The sentiment analysis model operates with <strong>84% accuracy</strong>, 
+                    providing reliable predictions for your text analysis needs.
+                </p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-5">
+            <a href="{% url 'home' %}" class="btn-custom">
+                <i class="fas fa-plus me-2"></i>
+                Analyze New Text
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Chart.js default settings for dark theme
+Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
+Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+const sentimentData = {{ sentiment_counts|safe }};
+
+let positive = 0, negative = 0, neutral = 0;
+sentimentData.forEach(item => {
+    if (item.sentiment === 'positive') positive = item.count;
+    if (item.sentiment === 'negative') negative = item.count;
+    if (item.sentiment === 'neutral') neutral = item.count;
+});
+
+// Pie Chart
+const pieCtx = document.getElementById('sentimentPieChart');
+if (pieCtx && sentimentData.length > 0) {
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Positive', 'Negative', 'Neutral'],
+            datasets: [{
+                data: [positive, negative, neutral],
+                backgroundColor: [
+                    'rgba(74, 222, 128, 0.8)',
+                    'rgba(248, 113, 113, 0.8)',
+                    'rgba(148, 163, 184, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(74, 222, 128, 1)',
+                    'rgba(248, 113, 113, 1)',
+                    'rgba(148, 163, 184, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: { size: 13 },
+                        color: 'rgba(255, 255, 255, 0.8)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Doughnut Chart
+const doughnutCtx = document.getElementById('sentimentDoughnutChart');
+if (doughnutCtx && sentimentData.length > 0) {
+    new Chart(doughnutCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Positive', 'Negative', 'Neutral'],
+            datasets: [{
+                data: [positive, negative, neutral],
+                backgroundColor: [
+                    'rgba(74, 222, 128, 0.8)',
+                    'rgba(248, 113, 113, 0.8)',
+                    'rgba(148, 163, 184, 0.8)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: { size: 13 },
+                        color: 'rgba(255, 255, 255, 0.8)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Trend Chart
+const trendCtx = document.getElementById('trendChart');
+if (trendCtx && {{ dates|length }} > 0) {
+    const dates = {{ dates|safe }};
+    const positiveData = {{ positive_data|safe }};
+    const negativeData = {{ negative_data|safe }};
+    const neutralData = {{ neutral_data|safe }};
+    
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Positive',
+                    data: positiveData,
+                    borderColor: 'rgba(74, 222, 128, 1)',
+                    backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Negative',
+                    data: negativeData,
+                    borderColor: 'rgba(248, 113, 113, 1)',
+                    backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Neutral',
+                    data: neutralData,
+                    borderColor: 'rgba(148, 163, 184, 1)',
+                    backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        font: { size: 13 }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { 
+                        stepSize: 1,
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

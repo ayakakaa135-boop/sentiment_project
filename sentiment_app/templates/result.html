@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block title %}Result - Sentiment Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #0f0f1e;
+        color: white;
+        min-height: 100vh;
+    }
+
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(45deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+    }
+
+    .bg-animation::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.3) 0%, transparent 50%);
+        animation: bgMove 15s ease-in-out infinite;
+    }
+
+    @keyframes bgMove {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(50px, 50px); }
+    }
+
+    .result-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 40px 20px;
+    }
+
+    .result-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 50px;
+        max-width: 800px;
+        margin: 0 auto;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .result-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .original-text-box {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .original-text-box h6 {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .original-text-content {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .translation-box {
+        background: rgba(255, 200, 100, 0.1);
+        border: 1px solid rgba(255, 200, 100, 0.3);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .translation-box h6 {
+        color: #ffc864;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .sentiment-result {
+        text-align: center;
+        padding: 50px 0;
+        animation: scaleIn 0.6s ease-out 0.3s both;
+    }
+
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .sentiment-icon {
+        font-size: 6rem;
+        margin-bottom: 30px;
+        animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .sentiment-icon.positive { color: #4ade80; text-shadow: 0 0 30px rgba(74, 222, 128, 0.5); }
+    .sentiment-icon.negative { color: #f87171; text-shadow: 0 0 30px rgba(248, 113, 113, 0.5); }
+    .sentiment-icon.neutral { color: #94a3b8; text-shadow: 0 0 30px rgba(148, 163, 184, 0.5); }
+
+    .sentiment-label {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .sentiment-label.positive { color: #4ade80; }
+    .sentiment-label.negative { color: #f87171; }
+    .sentiment-label.neutral { color: #94a3b8; }
+
+    .sentiment-label-ar {
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 30px;
+    }
+
+    .confidence-section {
+        margin-top: 40px;
+    }
+
+    .confidence-title {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .confidence-bar-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        height: 40px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .confidence-bar-fill {
+        height: 100%;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: width 1s ease-out;
+        animation: fillBar 1.5s ease-out;
+    }
+
+    @keyframes fillBar {
+        from { width: 0%; }
+    }
+
+    .confidence-bar-fill.positive {
+        background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+    }
+
+    .confidence-bar-fill.negative {
+        background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);
+        box-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+    }
+
+    .confidence-bar-fill.neutral {
+        background: linear-gradient(90deg, #94a3b8 0%, #64748b 100%);
+        box-shadow: 0 0 20px rgba(148, 163, 184, 0.5);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .btn-custom {
+        padding: 15px 35px;
+        border-radius: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary-custom {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary-custom:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+        .result-card {
+            padding: 30px 20px;
+        }
+
+        .sentiment-icon {
+            font-size: 4rem;
+        }
+
+        .sentiment-label {
+            font-size: 2rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-animation"></div>
+
+<div class="result-container">
+    <div class="container">
+        <div class="result-card">
+            <!-- Header -->
+            <div class="result-header">
+                <h1 class="result-title">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Analysis Complete
+                </h1>
+            </div>
+
+            <!-- Original Text -->
+            <div class="original-text-box">
+                <h6>
+                    <i class="fas fa-file-alt me-2"></i>
+                    Your Text
+                </h6>
+                <div class="original-text-content">
+                    "{{ text }}"
+                </div>
+            </div>
+
+            <!-- Translation Info -->
+            {% if was_translated %}
+            <div class="translation-box">
+                <h6>
+                    <i class="fas fa-language me-2"></i>
+                    Detected: Arabic → Translated to English
+                </h6>
+                <div style="color: rgba(255, 255, 255, 0.8);">
+                    "{{ translated_text }}"
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Sentiment Result -->
+            <div class="sentiment-result">
+                <div class="sentiment-icon {{ prediction }}">
+                    {% if prediction == 'positive' %}
+                        <i class="fas fa-smile"></i>
+                    {% elif prediction == 'negative' %}
+                        <i class="fas fa-frown"></i>
+                    {% else %}
+                        <i class="fas fa-meh"></i>
+                    {% endif %}
+                </div>
+
+                <div class="sentiment-label {{ prediction }}">
+                    {{ prediction }}
+                </div>
+
+                {% if prediction_ar %}
+                <div class="sentiment-label-ar">
+                    {{ prediction_ar }}
+                </div>
+                {% endif %}
+
+                <!-- Confidence -->
+                <div class="confidence-section">
+                    <div class="confidence-title">
+                        Confidence Score
+                    </div>
+                    <div class="confidence-bar-container">
+                        <div class="confidence-bar-fill {{ prediction }}" 
+                             style="width: {{ confidence }}%;">
+                            {{ confidence|floatformat:1 }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'home' %}" class="btn-custom btn-primary-custom">
+                    <i class="fas fa-redo me-2"></i>
+                    Analyze Another
+                </a>
+                <a href="{% url 'history' %}" class="btn-custom btn-secondary-custom">
+                    <i class="fas fa-history me-2"></i>
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
