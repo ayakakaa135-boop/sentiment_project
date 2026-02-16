@@ -58,14 +58,13 @@ WSGI_APPLICATION = 'sentiment_project.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        # سيقوم Render بتوفير DATABASE_URL تلقائياً
+      تلقائياً
         default=os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
 
-# إعدادات إضافية للأمان عند استخدام PostgreSQL في الإنتاج
 if not DEBUG:
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
