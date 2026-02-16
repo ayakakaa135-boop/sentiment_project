@@ -9,7 +9,7 @@ services:
     name: sentiment-analysis-app
     env: python
     buildCommand: ./build.sh
-    startCommand: gunicorn sentiment_project.wsgi:application --timeout 600
+    startCommand: startCommand: gunicorn sentiment_project.wsgi:application -c gunicorn.conf.py
     healthCheckPath: /healthz/
     envVars:
       - key: PYTHON_VERSION
