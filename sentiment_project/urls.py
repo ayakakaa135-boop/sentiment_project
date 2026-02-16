@@ -3,11 +3,13 @@
 
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
 from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     # Language switcher (without prefix)
     path('i18n/', include('django.conf.urls.i18n')),
+    path('healthz/', lambda r: HttpResponse("ok")),
 ]
 
 # URLs with language prefix
