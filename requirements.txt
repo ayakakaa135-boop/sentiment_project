@@ -9,3 +9,8 @@ python-dotenv
 dj-database-url
 whitenoise[brotli]
 psycopg2-binary
+djangorestframework
+django-redis
+nltk
+transformers
+torch
