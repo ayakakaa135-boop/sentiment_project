@@ -15,4 +15,7 @@ fi
 python manage.py collectstatic --no-input
 
 # Run migrations
+echo "Running migrations..."
 python manage.py migrate
+
+echo "Build process completed successfully!"
