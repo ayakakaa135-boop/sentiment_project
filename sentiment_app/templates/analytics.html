@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Analytics - Sentiment Analysis{% endblock %}
+{% block title %}{% trans "Analytics - Sentiment Analysis" %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -185,7 +186,7 @@
 
     .insight-card {
         background: rgba(255, 255, 255, 0.03);
-        border-left: 4px solid #667eea;
+        border-{% if LANGUAGE_BIDI %}right{% else %}left{% endif %}: 4px solid #667eea;
         border-radius: 12px;
         padding: 25px;
         margin-bottom: 20px;
@@ -194,12 +195,12 @@
 
     .insight-card:hover {
         background: rgba(255, 255, 255, 0.06);
-        transform: translateX(5px);
+        transform: translate{% if LANGUAGE_BIDI %}X(-5px){% else %}X(5px){% endif %};
     }
 
     .insight-icon {
         font-size: 1.5rem;
-        margin-right: 15px;
+        margin-{% if LANGUAGE_BIDI %}left{% else %}right{% endif %}: 15px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -232,6 +233,23 @@
         color: rgba(255, 255, 255, 0.5);
     }
 
+    .btn-custom {
+        padding: 15px 35px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .btn-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(-20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -252,16 +270,16 @@
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">
-                <i class="fas fa-chart-bar me-3"></i>
-                Analytics Dashboard
+                <i class="fas fa-chart-bar {% if not LANGUAGE_BIDI %}me-3{% else %}ms-3{% endif %}"></i>
+                {% trans "Analytics Dashboard" %}
             </h1>
-            <p class="page-subtitle">Comprehensive insights and trends</p>
+            <p class="page-subtitle">{% trans "Comprehensive insights and trends" %}</p>
         </div>
 
         <!-- Main Stat -->
         <div class="main-stat-card">
             <div class="main-stat-number">{{ total_predictions }}</div>
-            <div class="main-stat-label">Total Predictions Analyzed</div>
+            <div class="main-stat-label">{% trans "Total Predictions Analyzed" %}</div>
         </div>
 
         <!-- Sentiment Cards -->
@@ -278,7 +296,15 @@
                     {% endif %}
                 </div>
                 <div class="sentiment-card-number">{{ item.count }}</div>
-                <div class="sentiment-card-label">{{ item.sentiment }}</div>
+                <div class="sentiment-card-label">
+                    {% if item.sentiment == 'positive' %}
+                        {% trans "Positive" %}
+                    {% elif item.sentiment == 'negative' %}
+                        {% trans "Negative" %}
+                    {% else %}
+                        {% trans "Neutral" %}
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -289,8 +315,8 @@
             <div class="col-lg-6 mb-4">
                 <div class="chart-container">
                     <h4 class="chart-title">
-                        <i class="fas fa-chart-pie me-2"></i>
-                        Distribution
+                        <i class="fas fa-chart-pie {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                        {% trans "Distribution" %}
                     </h4>
                     {% if sentiment_counts %}
                     <canvas id="sentimentPieChart" height="250"></canvas>
@@ -299,7 +325,7 @@
                         <div class="empty-chart-icon">
                             <i class="fas fa-chart-pie"></i>
                         </div>
-                        <p class="empty-chart-text">No data available</p>
+                        <p class="empty-chart-text">{% trans "No data available" %}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -309,8 +335,8 @@
             <div class="col-lg-6 mb-4">
                 <div class="chart-container">
                     <h4 class="chart-title">
-                        <i class="fas fa-percentage me-2"></i>
-                        Percentages
+                        <i class="fas fa-percentage {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                        {% trans "Percentages" %}
                     </h4>
                     {% if sentiment_counts %}
                     <canvas id="sentimentDoughnutChart" height="250"></canvas>
@@ -319,7 +345,7 @@
                         <div class="empty-chart-icon">
                             <i class="fas fa-chart-donut"></i>
                         </div>
-                        <p class="empty-chart-text">No data available</p>
+                        <p class="empty-chart-text">{% trans "No data available" %}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -329,8 +355,8 @@
         <!-- Trend Chart -->
         <div class="chart-container">
             <h4 class="chart-title">
-                <i class="fas fa-chart-line me-2"></i>
-                7-Day Trend Analysis
+                <i class="fas fa-chart-line {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "7-Day Trend Analysis" %}
             </h4>
             {% if dates %}
             <canvas id="trendChart" height="100"></canvas>
@@ -339,7 +365,7 @@
                 <div class="empty-chart-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
-                <p class="empty-chart-text">Start analyzing to see trends</p>
+                <p class="empty-chart-text">{% trans "Start analyzing to see trends" %}</p>
             </div>
             {% endif %}
         </div>
@@ -347,23 +373,25 @@
         <!-- Insights -->
         <div class="insights-container">
             <h4 class="insights-title">
-                <i class="fas fa-lightbulb me-2"></i>
-                Key Insights
+                <i class="fas fa-lightbulb {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Key Insights" %}
             </h4>
 
             <div class="insight-card">
                 <h6 class="insight-title">
                     <i class="fas fa-trophy insight-icon"></i>
-                    Most Common Sentiment
+                    {% trans "Most Common Sentiment" %}
                 </h6>
                 <p class="insight-text">
                     {% if sentiment_counts %}
                         {% with sentiment_counts|first as top %}
-                            <strong>{{ top.sentiment|title }}</strong> sentiment appears most frequently 
-                            with <strong>{{ top.count }}</strong> predictions.
+                            {% blocktrans with sentiment=top.sentiment count=top.count %}
+                                <strong>{{ sentiment|title }}</strong> sentiment appears most frequently 
+                                with <strong>{{ count }}</strong> predictions.
+                            {% endblocktrans %}
                         {% endwith %}
                     {% else %}
-                        No data available yet.
+                        {% trans "No data available yet." %}
                     {% endif %}
                 </p>
             </div>
@@ -371,22 +399,25 @@
             <div class="insight-card">
                 <h6 class="insight-title">
                     <i class="fas fa-database insight-icon"></i>
-                    Total Analyzed
+                    {% trans "Total Analyzed" %}
                 </h6>
                 <p class="insight-text">
-                    You have analyzed <strong>{{ total_predictions }}</strong> text samples. 
-                    Keep analyzing to unlock more insights!
+                    {% blocktrans count counter=total_predictions %}
+                        You have analyzed <strong>{{ counter }}</strong> text sample.
+                    {% plural %}
+                        You have analyzed <strong>{{ counter }}</strong> text samples. 
+                        Keep analyzing to unlock more insights!
+                    {% endblocktrans %}
                 </p>
             </div>
 
             <div class="insight-card">
                 <h6 class="insight-title">
                     <i class="fas fa-chart-bar insight-icon"></i>
-                    Accuracy Rate
+                    {% trans "Accuracy Rate" %}
                 </h6>
                 <p class="insight-text">
-                    The sentiment analysis model operates with <strong>84% accuracy</strong>, 
-                    providing reliable predictions for your text analysis needs.
+                    {% trans "The sentiment analysis model operates with <strong>84% accuracy</strong>, providing reliable predictions for your text analysis needs." %}
                 </p>
             </div>
         </div>
@@ -394,8 +425,8 @@
         <!-- Action Buttons -->
         <div class="text-center mt-5">
             <a href="{% url 'home' %}" class="btn-custom">
-                <i class="fas fa-plus me-2"></i>
-                Analyze New Text
+                <i class="fas fa-plus {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Analyze New Text" %}
             </a>
         </div>
     </div>
@@ -419,13 +450,18 @@ sentimentData.forEach(item => {
     if (item.sentiment === 'neutral') neutral = item.count;
 });
 
+// Translation strings
+const positiveLabel = "{% trans 'Positive' %}";
+const negativeLabel = "{% trans 'Negative' %}";
+const neutralLabel = "{% trans 'Neutral' %}";
+
 // Pie Chart
 const pieCtx = document.getElementById('sentimentPieChart');
 if (pieCtx && sentimentData.length > 0) {
     new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Positive', 'Negative', 'Neutral'],
+            labels: [positiveLabel, negativeLabel, neutralLabel],
             datasets: [{
                 data: [positive, negative, neutral],
                 backgroundColor: [
@@ -464,7 +500,7 @@ if (doughnutCtx && sentimentData.length > 0) {
     new Chart(doughnutCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Positive', 'Negative', 'Neutral'],
+            labels: [positiveLabel, negativeLabel, neutralLabel],
             datasets: [{
                 data: [positive, negative, neutral],
                 backgroundColor: [
@@ -507,7 +543,7 @@ if (trendCtx && {{ dates|length }} > 0) {
             labels: dates,
             datasets: [
                 {
-                    label: 'Positive',
+                    label: positiveLabel,
                     data: positiveData,
                     borderColor: 'rgba(74, 222, 128, 1)',
                     backgroundColor: 'rgba(74, 222, 128, 0.1)',
@@ -515,7 +551,7 @@ if (trendCtx && {{ dates|length }} > 0) {
                     fill: true
                 },
                 {
-                    label: 'Negative',
+                    label: negativeLabel,
                     data: negativeData,
                     borderColor: 'rgba(248, 113, 113, 1)',
                     backgroundColor: 'rgba(248, 113, 113, 0.1)',
@@ -523,7 +559,7 @@ if (trendCtx && {{ dates|length }} > 0) {
                     fill: true
                 },
                 {
-                    label: 'Neutral',
+                    label: neutralLabel,
                     data: neutralData,
                     borderColor: 'rgba(148, 163, 184, 1)',
                     backgroundColor: 'rgba(148, 163, 184, 0.1)',

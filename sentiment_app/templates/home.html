@@ -1,23 +1,16 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Sentiment Analysis - AI Platform{% endblock %}
+{% block title %}{% trans "Home - AI Sentiment Analysis" %}{% endblock %}
 
 {% block extra_css %}
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
     body {
         background: #0f0f1e;
         color: white;
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        overflow-x: hidden;
+        font-family: {% if LANGUAGE_CODE == 'ar' %}'Cairo', {% endif %}'Inter', 'Segoe UI', sans-serif;
     }
 
-    /* Animated Background */
     .bg-animation {
         position: fixed;
         top: 0;
@@ -67,14 +60,8 @@
     }
 
     @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .logo-section {
@@ -131,23 +118,6 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .form-section {
-        margin-top: 40px;
-    }
-
-    .input-group-custom {
-        position: relative;
-        margin-bottom: 30px;
-    }
-
-    .input-label {
-        display: block;
-        margin-bottom: 15px;
-        font-size: 1rem;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 500;
-    }
-
     .textarea-custom {
         width: 100%;
         background: rgba(255, 255, 255, 0.08);
@@ -183,17 +153,11 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s;
-        position: relative;
-        overflow: hidden;
     }
 
     .submit-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-    }
-
-    .submit-btn:active {
-        transform: translateY(0);
     }
 
     .examples-container {
@@ -204,20 +168,6 @@
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .examples-title {
-        font-size: 1rem;
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 15px;
-        text-align: center;
-    }
-
-    .example-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-    }
-
     .example-chip {
         background: rgba(255, 255, 255, 0.08);
         padding: 12px 24px;
@@ -226,6 +176,8 @@
         transition: all 0.3s;
         border: 1px solid rgba(255, 255, 255, 0.1);
         font-size: 0.9rem;
+        margin: 5px;
+        display: inline-block;
     }
 
     .example-chip:hover {
@@ -263,17 +215,6 @@
         -webkit-text-fill-color: transparent;
     }
 
-    .feature-mini-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-
-    .feature-mini-desc {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
-    }
-
     .alert-custom {
         background: rgba(220, 53, 69, 0.2);
         border: 1px solid rgba(220, 53, 69, 0.4);
@@ -284,17 +225,9 @@
     }
 
     @media (max-width: 768px) {
-        .main-card {
-            padding: 40px 25px;
-        }
-
-        .main-title {
-            font-size: 2rem;
-        }
-
-        .features-mini {
-            grid-template-columns: 1fr;
-        }
+        .main-card { padding: 40px 25px; }
+        .main-title { font-size: 2rem; }
+        .features-mini { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -309,24 +242,23 @@
             <div class="logo-icon">
                 <i class="fas fa-brain"></i>
             </div>
-            <h1 class="main-title">Sentiment Analysis</h1>
-            <p class="main-subtitle">AI-powered emotional intelligence for text</p>
+            <h1 class="main-title">{% trans "Sentiment Analysis" %}</h1>
+            <p class="main-subtitle">{% trans "AI-powered emotional intelligence for text" %}</p>
             <div class="language-tags">
                 <span class="lang-tag">
-                    <i class="fas fa-check-circle me-1"></i>
+                    <i class="fas fa-check-circle {% if not LANGUAGE_BIDI %}me-1{% else %}ms-1{% endif %}"></i>
                     English
                 </span>
                 <span class="lang-tag">
-                    <i class="fas fa-check-circle me-1"></i>
+                    <i class="fas fa-check-circle {% if not LANGUAGE_BIDI %}me-1{% else %}ms-1{% endif %}"></i>
                     العربية
                 </span>
             </div>
         </div>
 
-        <!-- Error Alert -->
         {% if error %}
         <div class="alert-custom">
-            <i class="fas fa-exclamation-triangle me-2"></i>
+            <i class="fas fa-exclamation-triangle {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
             {{ error }}
         </div>
         {% endif %}
@@ -335,45 +267,44 @@
         <form method="post" action="{% url 'predict' %}" class="form-section">
             {% csrf_token %}
             
-            <div class="input-group-custom">
-                <label for="textInput" class="input-label">
-                    <i class="fas fa-keyboard me-2"></i>
-                    Enter your text
+            <div class="mb-4">
+                <label for="textInput" class="form-label" style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">
+                    <i class="fas fa-keyboard {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Enter your text" %}
                 </label>
                 <textarea 
                     name="text"
                     id="textInput"
                     class="textarea-custom"
-                    placeholder="Type or paste any text here...
-اكتب أو الصق أي نص هنا..."
+                    placeholder="{% trans 'Type or paste any text here...' %}"
                     required
                 ></textarea>
             </div>
 
             <button type="submit" class="submit-btn">
-                <i class="fas fa-magic me-2"></i>
-                Analyze Sentiment
+                <i class="fas fa-magic {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Analyze Sentiment" %}
             </button>
         </form>
 
         <!-- Quick Examples -->
         <div class="examples-container">
-            <div class="examples-title">
-                <i class="fas fa-lightbulb me-2"></i>
-                Try these examples:
+            <div class="text-center mb-3" style="color: rgba(255, 255, 255, 0.7); font-size: 1rem;">
+                <i class="fas fa-lightbulb {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Try these examples:" %}
             </div>
-            <div class="example-chips">
+            <div class="text-center">
                 <span class="example-chip" onclick="fillText('This is absolutely fantastic! I love it!')">
-                    😊 Positive
+                    😊 {% trans "Positive" %}
                 </span>
                 <span class="example-chip" onclick="fillText('Terrible experience. Very disappointed.')">
-                    😠 Negative
+                    😠 {% trans "Negative" %}
                 </span>
                 <span class="example-chip" onclick="fillText('The product works fine.')">
-                    😐 Neutral
+                    😐 {% trans "Neutral" %}
                 </span>
                 <span class="example-chip" onclick="fillText('المنتج ممتاز جداً!')">
-                    🌍 Arabic
+                    🌍 {% trans "Arabic" %}
                 </span>
             </div>
         </div>
@@ -382,18 +313,18 @@
         <div class="features-mini">
             <div class="feature-mini">
                 <i class="fas fa-bolt"></i>
-                <div class="feature-mini-title">Instant</div>
-                <div class="feature-mini-desc">&lt;1s response</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">{% trans "Instant" %}</div>
+                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">{% trans "<1s response" %}</div>
             </div>
             <div class="feature-mini">
                 <i class="fas fa-check-double"></i>
-                <div class="feature-mini-title">Accurate</div>
-                <div class="feature-mini-desc">84% precision</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">{% trans "Accurate" %}</div>
+                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">{% trans "84% precision" %}</div>
             </div>
             <div class="feature-mini">
                 <i class="fas fa-shield-alt"></i>
-                <div class="feature-mini-title">Secure</div>
-                <div class="feature-mini-desc">Private & Safe</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">{% trans "Secure" %}</div>
+                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">{% trans "Private & Safe" %}</div>
             </div>
         </div>
     </div>

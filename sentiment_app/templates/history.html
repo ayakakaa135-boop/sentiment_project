@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}History - Sentiment Analysis{% endblock %}
+{% block title %}{% trans "History - Sentiment Analysis" %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -326,10 +327,7 @@
             grid-template-columns: 1fr;
             text-align: center;
         }
-
-        .prediction-icon {
-            font-size: 2.5rem;
-        }
+        .prediction-icon { font-size: 2.5rem; }
     }
 </style>
 {% endblock %}
@@ -342,50 +340,54 @@
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">
-                <i class="fas fa-history me-3"></i>
-                Prediction History
+                <i class="fas fa-history {% if not LANGUAGE_BIDI %}me-3{% else %}ms-3{% endif %}"></i>
+                {% trans "Prediction History" %}
             </h1>
-            <p class="page-subtitle">Track and review all your sentiment analyses</p>
+            <p class="page-subtitle">{% trans "Track and review all your sentiment analyses" %}</p>
         </div>
 
         <!-- Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number total">{{ total }}</div>
-                <div class="stat-label">Total</div>
+                <div class="stat-label">{% trans "Total" %}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number positive">{{ positive }}</div>
-                <div class="stat-label">Positive</div>
+                <div class="stat-label">{% trans "Positive" %}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number negative">{{ negative }}</div>
-                <div class="stat-label">Negative</div>
+                <div class="stat-label">{% trans "Negative" %}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number neutral">{{ neutral }}</div>
-                <div class="stat-label">Neutral</div>
+                <div class="stat-label">{% trans "Neutral" %}</div>
             </div>
         </div>
 
         <!-- Filters -->
         <div class="filter-container">
             <div class="filter-title">
-                <i class="fas fa-filter me-2"></i>
-                Filter by Sentiment
+                <i class="fas fa-filter {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Filter by Sentiment" %}
             </div>
             <div class="filter-buttons">
                 <button class="filter-btn active" onclick="filterPredictions('all')">
-                    <i class="fas fa-list me-2"></i>All
+                    <i class="fas fa-list {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "All" %}
                 </button>
                 <button class="filter-btn" onclick="filterPredictions('positive')">
-                    <i class="fas fa-smile me-2"></i>Positive
+                    <i class="fas fa-smile {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Positive" %}
                 </button>
                 <button class="filter-btn" onclick="filterPredictions('negative')">
-                    <i class="fas fa-frown me-2"></i>Negative
+                    <i class="fas fa-frown {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Negative" %}
                 </button>
                 <button class="filter-btn" onclick="filterPredictions('neutral')">
-                    <i class="fas fa-meh me-2"></i>Neutral
+                    <i class="fas fa-meh {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Neutral" %}
                 </button>
             </div>
         </div>
@@ -411,20 +413,26 @@
                             "{{ pred.text|truncatewords:20 }}"
                         </div>
                         <div class="prediction-meta">
-                            <i class="far fa-clock me-1"></i>
+                            <i class="far fa-clock {% if not LANGUAGE_BIDI %}me-1{% else %}ms-1{% endif %}"></i>
                             {{ pred.created_at|date:"M d, Y • H:i" }}
                         </div>
                     </div>
 
                     <div class="prediction-sentiment">
                         <span class="sentiment-badge {{ pred.sentiment }}">
-                            {{ pred.sentiment }}
+                            {% if pred.sentiment == 'positive' %}
+                                {% trans "Positive" %}
+                            {% elif pred.sentiment == 'negative' %}
+                                {% trans "Negative" %}
+                            {% else %}
+                                {% trans "Neutral" %}
+                            {% endif %}
                         </span>
                     </div>
 
                     <div class="prediction-confidence">
                         <div class="confidence-value">{{ pred.confidence|floatformat:0 }}%</div>
-                        <div class="confidence-label">Confidence</div>
+                        <div class="confidence-label">{% trans "Confidence" %}</div>
                         <div class="confidence-bar">
                             <div class="confidence-fill {{ pred.sentiment }}" 
                                  style="width: {{ pred.confidence }}%">
@@ -440,11 +448,11 @@
             <div class="empty-icon">
                 <i class="fas fa-inbox"></i>
             </div>
-            <h3 class="empty-title">No Predictions Yet</h3>
-            <p class="empty-text">Start analyzing text to build your history</p>
+            <h3 class="empty-title">{% trans "No Predictions Yet" %}</h3>
+            <p class="empty-text">{% trans "Start analyzing text to build your history" %}</p>
             <a href="{% url 'home' %}" class="btn-custom">
-                <i class="fas fa-plus me-2"></i>
-                Analyze Text
+                <i class="fas fa-plus {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Analyze Text" %}
             </a>
         </div>
         {% endif %}
@@ -452,8 +460,8 @@
         <!-- Back Button -->
         <div class="text-center mt-5">
             <a href="{% url 'home' %}" class="btn-custom">
-                <i class="fas fa-arrow-left me-2"></i>
-                Back to Home
+                <i class="fas fa-arrow-left {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                {% trans "Back to Home" %}
             </a>
         </div>
     </div>

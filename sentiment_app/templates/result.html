@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Result - Sentiment Analysis{% endblock %}
+{% block title %}{% trans "Result - Sentiment Analysis" %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -212,6 +213,7 @@
         gap: 15px;
         justify-content: center;
         margin-top: 40px;
+        flex-wrap: wrap;
     }
 
     .btn-custom {
@@ -234,6 +236,7 @@
     .btn-primary-custom:hover {
         transform: translateY(-3px);
         box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        color: white;
     }
 
     .btn-secondary-custom {
@@ -245,24 +248,14 @@
     .btn-secondary-custom:hover {
         background: rgba(255, 255, 255, 0.15);
         transform: translateY(-3px);
+        color: white;
     }
 
     @media (max-width: 768px) {
-        .result-card {
-            padding: 30px 20px;
-        }
-
-        .sentiment-icon {
-            font-size: 4rem;
-        }
-
-        .sentiment-label {
-            font-size: 2rem;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
+        .result-card { padding: 30px 20px; }
+        .sentiment-icon { font-size: 4rem; }
+        .sentiment-label { font-size: 2rem; }
+        .action-buttons { flex-direction: column; }
     }
 </style>
 {% endblock %}
@@ -276,16 +269,16 @@
             <!-- Header -->
             <div class="result-header">
                 <h1 class="result-title">
-                    <i class="fas fa-chart-line me-2"></i>
-                    Analysis Complete
+                    <i class="fas fa-chart-line {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Analysis Complete" %}
                 </h1>
             </div>
 
             <!-- Original Text -->
             <div class="original-text-box">
                 <h6>
-                    <i class="fas fa-file-alt me-2"></i>
-                    Your Text
+                    <i class="fas fa-file-alt {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Your Text" %}
                 </h6>
                 <div class="original-text-content">
                     "{{ text }}"
@@ -296,8 +289,8 @@
             {% if was_translated %}
             <div class="translation-box">
                 <h6>
-                    <i class="fas fa-language me-2"></i>
-                    Detected: Arabic → Translated to English
+                    <i class="fas fa-language {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Detected: Arabic → Translated to English" %}
                 </h6>
                 <div style="color: rgba(255, 255, 255, 0.8);">
                     "{{ translated_text }}"
@@ -318,7 +311,13 @@
                 </div>
 
                 <div class="sentiment-label {{ prediction }}">
-                    {{ prediction }}
+                    {% if prediction == 'positive' %}
+                        {% trans "Positive" %}
+                    {% elif prediction == 'negative' %}
+                        {% trans "Negative" %}
+                    {% else %}
+                        {% trans "Neutral" %}
+                    {% endif %}
                 </div>
 
                 {% if prediction_ar %}
@@ -330,7 +329,7 @@
                 <!-- Confidence -->
                 <div class="confidence-section">
                     <div class="confidence-title">
-                        Confidence Score
+                        {% trans "Confidence Score" %}
                     </div>
                     <div class="confidence-bar-container">
                         <div class="confidence-bar-fill {{ prediction }}" 
@@ -344,12 +343,12 @@
             <!-- Action Buttons -->
             <div class="action-buttons">
                 <a href="{% url 'home' %}" class="btn-custom btn-primary-custom">
-                    <i class="fas fa-redo me-2"></i>
-                    Analyze Another
+                    <i class="fas fa-redo {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "Analyze Another" %}
                 </a>
                 <a href="{% url 'history' %}" class="btn-custom btn-secondary-custom">
-                    <i class="fas fa-history me-2"></i>
-                    View History
+                    <i class="fas fa-history {% if not LANGUAGE_BIDI %}me-2{% else %}ms-2{% endif %}"></i>
+                    {% trans "View History" %}
                 </a>
             </div>
         </div>
