@@ -1,0 +1,247 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-16 14:14+0100\n"
+"PO-Revision-Date: 2024-02-16 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+# Home Page
+#: .\sentiment_app\templates\base.html:8
+#: .\sentiment_app\templates\home.html:245
+msgid "Sentiment Analysis"
+msgstr "تحليل المشاعر"
+
+# Navigation
+#: .\sentiment_app\templates\base.html:166
+msgid "Sentiment AI"
+msgstr "الذكاء الاصطناعي للمشاعر"
+
+#: .\sentiment_app\templates\base.html:176
+msgid "Home"
+msgstr "الرئيسية"
+
+#: .\sentiment_app\templates\base.html:182
+msgid "History"
+msgstr "السجل"
+
+#: .\sentiment_app\templates\base.html:188
+msgid "Analytics"
+msgstr "التحليلات"
+
+# Footer
+#: .\sentiment_app\templates\base.html:222
+msgid "Sentiment Analysis Platform"
+msgstr "منصة تحليل المشاعر"
+
+#: .\sentiment_app\templates\base.html:223
+msgid "Powered by Machine Learning & Django"
+msgstr "مدعوم بتعلم الآلة و Django"
+
+#: .\sentiment_app\templates\history.html:4
+msgid "History - Sentiment Analysis"
+msgstr "السجل - تحليل المشاعر"
+
+# History Page
+#: .\sentiment_app\templates\history.html:344
+msgid "Prediction History"
+msgstr "سجل التوقعات"
+
+#: .\sentiment_app\templates\history.html:346
+msgid "Track and review all your sentiment analyses"
+msgstr "تتبع ومراجعة جميع تحليلات المشاعر الخاصة بك"
+
+#: .\sentiment_app\templates\history.html:353
+msgid "Total"
+msgstr "الإجمالي"
+
+#: .\sentiment_app\templates\history.html:357
+#: .\sentiment_app\templates\history.html:382
+#: .\sentiment_app\templates\history.html:424
+#: .\sentiment_app\templates\home.html:298
+#: .\sentiment_app\templates\result.html:315
+msgid "Positive"
+msgstr "إيجابي"
+
+#: .\sentiment_app\templates\history.html:361
+#: .\sentiment_app\templates\history.html:386
+#: .\sentiment_app\templates\history.html:426
+#: .\sentiment_app\templates\home.html:301
+#: .\sentiment_app\templates\result.html:317
+msgid "Negative"
+msgstr "سلبي"
+
+#: .\sentiment_app\templates\history.html:365
+#: .\sentiment_app\templates\history.html:390
+#: .\sentiment_app\templates\history.html:428
+#: .\sentiment_app\templates\home.html:304
+#: .\sentiment_app\templates\result.html:319
+msgid "Neutral"
+msgstr "محايد"
+
+#: .\sentiment_app\templates\history.html:373
+msgid "Filter by Sentiment"
+msgstr "تصفية حسب المشاعر"
+
+#: .\sentiment_app\templates\history.html:378
+msgid "All"
+msgstr "الكل"
+
+#: .\sentiment_app\templates\history.html:435
+#, fuzzy
+#| msgid "Confidence Score"
+msgid "Confidence"
+msgstr "درجة الثقة"
+
+#: .\sentiment_app\templates\history.html:451
+msgid "No Predictions Yet"
+msgstr "لا توجد توقعات بعد"
+
+#: .\sentiment_app\templates\history.html:452
+msgid "Start analyzing text to build your history"
+msgstr "ابدأ بتحليل النصوص لبناء سجلك"
+
+#: .\sentiment_app\templates\history.html:455
+msgid "Analyze Text"
+msgstr "حلل النص"
+
+#: .\sentiment_app\templates\history.html:464
+msgid "Back to Home"
+msgstr "العودة للرئيسية"
+
+# Titles
+#: .\sentiment_app\templates\home.html:4
+msgid "Home - AI Sentiment Analysis"
+msgstr "الرئيسية - تحليل المشاعر بالذكاء الاصطناعي"
+
+#: .\sentiment_app\templates\home.html:246
+msgid "AI-powered emotional intelligence for text"
+msgstr "ذكاء عاطفي مدعوم بالذكاء الاصطناعي للنصوص"
+
+#: .\sentiment_app\templates\home.html:273
+msgid "Enter your text"
+msgstr "أدخل النص الخاص بك"
+
+#: .\sentiment_app\templates\home.html:279
+msgid "Type or paste any text here..."
+msgstr "اكتب أو الصق أي نص هنا..."
+
+#: .\sentiment_app\templates\home.html:286
+msgid "Analyze Sentiment"
+msgstr "حلل المشاعر"
+
+#: .\sentiment_app\templates\home.html:294
+msgid "Try these examples:"
+msgstr "جرب هذه الأمثلة:"
+
+#: .\sentiment_app\templates\home.html:307
+msgid "Arabic"
+msgstr "عربي"
+
+# Features
+#: .\sentiment_app\templates\home.html:316
+msgid "Instant"
+msgstr "فوري"
+
+#: .\sentiment_app\templates\home.html:317
+msgid "<1s response"
+msgstr "استجابة أقل من ثانية"
+
+#: .\sentiment_app\templates\home.html:321
+msgid "Accurate"
+msgstr "دقيق"
+
+#: .\sentiment_app\templates\home.html:322
+#, fuzzy, python-format
+#| msgid "84% precision"
+msgid "84%% precision"
+msgstr "دقة 84%"
+
+#: .\sentiment_app\templates\home.html:326
+msgid "Secure"
+msgstr "آمن"
+
+#: .\sentiment_app\templates\home.html:327
+msgid "Private & Safe"
+msgstr "خاص وآمن"
+
+#: .\sentiment_app\templates\result.html:4
+msgid "Result - Sentiment Analysis"
+msgstr "النتيجة - تحليل المشاعر"
+
+# Result Page
+#: .\sentiment_app\templates\result.html:273
+msgid "Analysis Complete"
+msgstr "اكتمل التحليل"
+
+#: .\sentiment_app\templates\result.html:281
+msgid "Your Text"
+msgstr "النص الخاص بك"
+
+#: .\sentiment_app\templates\result.html:293
+msgid "Detected: Arabic → Translated to English"
+msgstr ""
+
+#: .\sentiment_app\templates\result.html:332
+msgid "Confidence Score"
+msgstr "درجة الثقة"
+
+#: .\sentiment_app\templates\result.html:347
+msgid "Analyze Another"
+msgstr "حلل نص آخر"
+
+#: .\sentiment_app\templates\result.html:351
+msgid "View History"
+msgstr "عرض السجل"
+
+# Analytics Page
+#~ msgid "Analytics Dashboard"
+#~ msgstr "لوحة التحليلات"
+
+#~ msgid "Comprehensive insights and trends"
+#~ msgstr "رؤى واتجاهات شاملة"
+
+#~ msgid "Total Predictions Analyzed"
+#~ msgstr "إجمالي التوقعات المحللة"
+
+#~ msgid "Distribution"
+#~ msgstr "التوزيع"
+
+#~ msgid "Percentages"
+#~ msgstr "النسب المئوية"
+
+#~ msgid "7-Day Trend Analysis"
+#~ msgstr "تحليل اتجاه 7 أيام"
+
+#~ msgid "Key Insights"
+#~ msgstr "رؤى رئيسية"
+
+#~ msgid "Most Common Sentiment"
+#~ msgstr "المشاعر الأكثر شيوعاً"
+
+#~ msgid "Total Analyzed"
+#~ msgstr "الإجمالي المحلل"
+
+#~ msgid "Accuracy Rate"
+#~ msgstr "معدل الدقة"
+
+#~ msgid "Analyze New Text"
+#~ msgstr "حلل نص جديد"
+
+#~ msgid "Analytics - Sentiment Analysis"
+#~ msgstr "التحليلات - تحليل المشاعر"
+
+
+
