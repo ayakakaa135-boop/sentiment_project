@@ -27,11 +27,16 @@
 - **Export Capabilities**: Download data as CSV
 
 ### 🔌 Integration
-- **REST API**: Full JSON API for external integrations
+- **REST API**: Full JSON API + DRF v2 endpoint for external integrations
 - **Multilingual**: Built-in translation engine
 - **Scalable**: Optimized for high-volume processing
 
 ---
+
+### ⚡ Performance & Accuracy Enhancements
+- **Redis Caching (Optional)**: Cache analytics responses for faster repeated requests.
+- **Transformers Backend (Optional)**: Set `USE_TRANSFORMERS=True` to use a HuggingFace model.
+- **NLTK Preprocessing**: Improved tokenization and stemming before prediction.
 
 ## 📈 Project Statistics
 
@@ -42,7 +47,7 @@
 | **Data Sources** | 4 (Gaming, Mobile, Twitter, Reviews) |
 | **Languages** | 2 (English, Arabic) |
 | **Response Time** | <1 second |
-| **API Endpoints** | 5 |
+| **API Endpoints** | 6 |
 
 ---
 
@@ -163,7 +168,7 @@ http://your-domain.com/api/
 
 ### Endpoints
 
-#### 1. Predict Sentiment
+#### 1. Predict Sentiment (Legacy)
 ```http
 POST /api/predict/
 Content-Type: application/json
@@ -189,7 +194,17 @@ Content-Type: application/json
 }
 ```
 
-#### 2. Arabic Text Example
+#### 2. Predict Sentiment (DRF v2 JSON)
+```http
+POST /api/v2/predict/
+Content-Type: application/json
+
+{
+  "text": "This product is amazing!"
+}
+```
+
+#### 3. Arabic Text Example
 ```http
 POST /api/predict/
 Content-Type: application/json
